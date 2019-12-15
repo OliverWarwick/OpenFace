@@ -20,11 +20,13 @@ class FiveCardHand(ThreeCardHand):
 
         # Find a list of all pairs, and from there easy to do high and low.
 
-        pairsList = set()
+        pairsList = []
 
         for val in self.freq:
             if self.freq[val] == 2:
-                pairsList.add(val)
+                pairsList.append(val)
+
+        pairsList.sort(reverse=True) # Rank the pairs high to low.
 
         if len(pairsList) == 2:
             hasTwoPair = True
@@ -32,9 +34,10 @@ class FiveCardHand(ThreeCardHand):
         # High represents the high pairs and low the lower of the two.
 
         if hasTwoPair == True:
-            self.high = max(pairsList)
-            self.low = min(pairsList)
-            return PokerHand("Two Pair", self.high, self.low)
+            for val in self.freq:
+                if self.freq[val] == 1:
+                    pairsList.append(val)
+            return PokerHand("Two Pair", pairsList) # Should containing the three number, for the 2 pairs and then extra card.
         else:
             return None
 
@@ -51,7 +54,8 @@ class FiveCardHand(ThreeCardHand):
         twos = self.hasOnePair()
 
         if (threes is not None) and (twos is not None):
-            return PokerHand("Full House", threes.high, twos.high)
+            # If both are true, then need the important card from each of them, in the order of the triple first.
+            return PokerHand("Full House", [threes.importantCards[0], twos.importantCards[0]])
         else:
             return None
 
@@ -64,12 +68,14 @@ class FiveCardHand(ThreeCardHand):
         for val in self.freq:
             if self.freq[val] == 4:
                 hasFourOfKind = True
-                self.high = val  #Can't have more than one four of kind.
+                self.importantCards.append(val) #Can't have more than one four of kind.
 
         if hasFourOfKind:
             # Find the remaining card
-            self.findRemainingHighest(4)
-            return PokerHand("Four of a Kind", self.high, self.low)
+            for val in self.freq:
+                if self.freq[val] == 1:
+                    self.importantCards.append(val)
+            return PokerHand("Four of a Kind", self.importantCards)
         else:
             return None
 
@@ -113,13 +119,13 @@ class FiveCardHand(ThreeCardHand):
             # Then need to find the highest, and then the second highest.
 
             for val in self.freq:
-                if self.freq[val] > 0 and val > self.high:
-                    self.high = val
+                if self.freq[val] == 1:
+                    self.importantCards.append(val)
+            self.importantCards.sort(reverse=True)
 
             #Once finished, remove then call the remaining routine.
 
-            self.findRemainingHighest(1)
-            return PokerHand("Flush", self.high, self.low)
+            return PokerHand("Flush", self.importantCards)
         else:
             return None
 
@@ -143,8 +149,8 @@ class FiveCardHand(ThreeCardHand):
                 if valuesOfCards[i] + 1 != valuesOfCards[i+1]:
                     return None
 
-            # If not then this is true, and can return the last element.
-            return PokerHand("Straight", valuesOfCards[4])
+            # If not then this is true, and can return the highest card.
+            return PokerHand("Straight", [valuesOfCards[4]])
 
         return None
 
@@ -160,7 +166,7 @@ class FiveCardHand(ThreeCardHand):
 
         if st is not None and fl is not None:
             # Find high value
-            return PokerHand("Straight Flush", st.high)
+            return PokerHand("Straight Flush", [st.importantCards[0]])
         else:
             return None
 
@@ -171,8 +177,8 @@ class FiveCardHand(ThreeCardHand):
 
         stfl = self.hasStraightFlush()
 
-        if (stfl is not None) and (stfl.high == 14):
-            return PokerHand("Royal Flush", 14)
+        if (stfl is not None) and (stfl.importantCards[0] == 14):
+            return PokerHand("Royal Flush", [14])
         else:
             return None
 

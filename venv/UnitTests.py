@@ -11,11 +11,11 @@ def threeCardTest():
 
     test3.currentHand = [Card("Heart", "9"), Card("Diamond", "7"), Card("Heart", "8")]
     result3 = test3.hasHighCard()
-    print("Test Correct high card: ", result3.high == 9)
+    print("Test Correct high card: ", result3.importantCards[0] == 9)
 
     test3.currentHand = [Card("Heart", "8"), Card("Diamond", "7"), Card("Heart", "10")]
     result3 = test3.hasHighCard()
-    print("Test Correct high card and next best: ", result3.high == 10 and result3.low == 8)
+    print("Test Correct high card and next best: ", result3.importantCards[0] == 10 and result3.importantCards[1] == 8)
 
     # One Pair
 
@@ -33,17 +33,17 @@ def threeCardTest():
 
     test3.currentHand = [Card("Heart", "5"), Card("Diamond", "5"), Card("Heart", "7")]
     result3 = test3.hasOnePair()
-    print("Test Correct one pair with highest value otherwise: ", result3.low == 7 and result3.high == 5)
+    print("Test Correct one pair with highest value otherwise: ", result3.importantCards[0] == 5 and result3.importantCards[1] == 7)
 
     test3.currentHand = [Card("Heart", "7"), Card("Diamond", "Ace"), Card("Heart", "7")]
     result3 = test3.hasOnePair()
-    print("Test Correct pairs with highest value otherwise with ace: ", result3.low == 14)
+    print("Test Correct pairs with highest value otherwise with ace: ", result3.importantCards[1] == 14)
 
     # Three of Kind
 
     test3.currentHand = [Card("Heart", "7"), Card("Diamond", "7"), Card("Spade", "7")]
     result3 = test3.hasThreeOfKind()
-    print("Test Correct Three of kind: ", result3.high == 7)
+    print("Test Correct Three of kind: ", result3.importantCards[0] == 7)
 
     test3.currentHand = [Card("Heart", "7"), Card("Diamond", "Ace"), Card("Heart", "7")]
     result3 = test3.hasThreeOfKind()
@@ -62,27 +62,27 @@ def fiveCardTest():
     test5.currentHand = [Card("Heart", "6"), Card("Diamond", "Ace"), Card("Heart", "7"), Card("Diamond", "5"),
                          Card("Shade", "7")]
     result5 = test5.hasHighCard()
-    print("Test for high card: ", result5.high == 14, result5.low == 7)
+    print("Test for high card: ", result5.importantCards[0] == 14, result5.importantCards[1] == 7, result5.importantCards[2] == 7)
 
     # One Pair
 
     test5.currentHand = [Card("Heart", "6"), Card("Diamond", "Ace"), Card("Heart", "7"), Card("Diamond", "5"),
                          Card("Shade", "7")]
     result5 = test5.hasOnePair()
-    print("Test for one pair with singles: ", result5.high == 7, result5.low == 14)
+    print("Test for one pair with singles: ", result5.importantCards[0] == 7, result5.importantCards[1] == 14)
 
 
     test5.currentHand = [Card("Heart", "6"), Card("Diamond", "4"), Card("Heart", "7"), Card("Diamond", "6"),
                          Card("Shade", "7")]
     result5 = test5.hasOnePair()
-    print("Test for one pair with two distinct pairs", result5.high == 7, result5.low == 6)
+    print("Test for one pair with two distinct pairs", result5.importantCards[0] == 7, result5.importantCards[1] == 6)
 
     # Three of Kind
 
     test5.currentHand = [Card("Heart", "7"), Card("Diamond", "Ace"), Card("Heart", "7"), Card("Diamond", "5"),
                          Card("Shade", "7")]
     result5 = test5.hasThreeOfKind()
-    print("Test Correct Three of kind: ", result5.high == 7)
+    print("Test Correct Three of kind: ", result5.importantCards[0] == 7, result5.importantCards[1] == 14)
 
     test5.currentHand = [Card("Heart", "7"), Card("Diamond", "Ace"), Card("Heart", "7"), Card("Diamond", "5"),
                          Card("Shade", "6")]
@@ -92,14 +92,14 @@ def fiveCardTest():
     test5.currentHand = [Card("Heart", "7"), Card("Diamond", "Jack"), Card("Heart", "7"), Card("Diamond", "5"),
                          Card("Shade", "7")]
     result5 = test5.hasThreeOfKind()
-    print("Test Three of kind: ", result5.high == 7, result5.low == 11)
+    print("Test Three of kind: ", result5.importantCards[0] == 7, result5.importantCards[1] == 11)
 
     # Two Pair
 
     test5.currentHand = [Card("Heart", "7"), Card("Diamond", "Jack"), Card("Heart", "7"), Card("Diamond", "5"),
                          Card("Shade", "5")]
     result5 = test5.hasTwoPair()
-    print("Test for two pair: ", result5.high == 7, result5.low == 5)
+    print("Test for two pair: ", result5.importantCards[0] == 7, result5.importantCards[1] == 5, result5.importantCards[2] == 11)
 
     test5.currentHand = [Card("Heart", "6"), Card("Diamond", "Jack"), Card("Heart", "7"), Card("Diamond", "5"),
                          Card("Shade", "5")]
@@ -116,14 +116,14 @@ def fiveCardTest():
     test5.currentHand = [Card("Heart", "7"), Card("Diamond", "5"), Card("Heart", "7"), Card("Diamond", "5"),
                      Card("Shade", "5")]
     result5 = test5.hasFullHouse()
-    print("Test for full house positive: ", result5.high == 5, result5.low == 7)
+    print("Test for full house positive: ", result5.importantCards[0] == 5, result5.importantCards[1] == 7)
 
-    # Full House
+    # 4 of Kind
 
     test5.currentHand = [Card("Heart", "7"), Card("Diamond", "7"), Card("Heart", "7"), Card("Diamond", "5"),
                    Card("Shade", "7")]
     result5 = test5.hasFourOfKind()
-    print("Test for four of kind positive: ", result5.high == 7, result5.low == 5)
+    print("Test for four of kind positive: ", result5.importantCards[0] == 7, result5.importantCards[1] == 5)
 
     test5.currentHand =[Card("Heart", "7"), Card("Diamond", "4"), Card("Heart", "7"), Card("Diamond", "5"),
                           Card("Shade", "7")]
@@ -135,7 +135,7 @@ def fiveCardTest():
     test5.currentHand = [Card("Heart", "3"), Card("Heart", "7"), Card("Heart", "6"), Card("Heart", "5"),
                           Card("Heart", "Jack")]
     result5 = test5.hasFlush()
-    print("Test for flush positive: ", result5.high == 11, result5.low == 7)
+    print("Test for flush positive: ", result5.importantCards[0] == 11, result5.importantCards[1] == 7, result5.importantCards[4] == 3)
 
     test5.currentHand = [Card("Spade", "3"), Card("Heart", "7"), Card("Heart", "6"), Card("Heart", "5"),
                           Card("Heart", "Jack")]
@@ -152,7 +152,7 @@ def fiveCardTest():
     test5.currentHand = [Card("Spade", "4"), Card("Spade", "7"), Card("Spade", "6"), Card("Heart", "5"),
                          Card("Heart", "8")]
     result5 = test5.hasStraight()
-    print("Test for straight Positive: ", result5.high == 8)
+    print("Test for straight Positive: ", result5.importantCards[0] == 8)
 
     test5.currentHand = [Card("Spade", "3"), Card("Spade", "7"), Card("Spade", "6"), Card("Heart", "5"),
                          Card("Heart", "3")]
@@ -169,7 +169,7 @@ def fiveCardTest():
     test5.currentHand = [Card("Spade", "4"), Card("Spade", "7"), Card("Spade", "6"), Card("Spade", "5"),
                          Card("Spade", "8")]
     result5 = test5.hasStraightFlush()
-    print("Test for Straight Flush Positive: ", result5.high == 8)
+    print("Test for Straight Flush Positive: ", result5.importantCards[0] == 8)
 
     test5.currentHand = [Card("Spade", "3"), Card("Spade", "7"), Card("Spade", "6"), Card("Heart", "5"),
                          Card("Heart", "Jack")]
@@ -186,7 +186,7 @@ def fiveCardTest():
     test5.currentHand = [Card("Spade", "10"), Card("Spade", "Jack"), Card("Spade", "Queen"), Card("Spade", "King"),
                          Card("Spade", "Ace")]
     result5 = test5.hasRoyalFlush()
-    print("Test for Royal Flush Positive: ", result5.style == "Royal Flush" , result5.high == 14)
+    print("Test for Royal Flush Positive: ", result5.style == "Royal Flush" , result5.importantCards[0] == 14)
 
     test5.currentHand = [Card("Spade", "3"), Card("Spade", "7"), Card("Spade", "6"), Card("Spade", "5"),
                          Card("Spade", "8")]
@@ -215,17 +215,12 @@ def bestHandTest():
     handFive.currentHand = [Card("Spade", "3"), Card("Spade", "7"), Card("Spade", "6"), Card("Heart", "5"),
                          Card("Heart", "4")]
     result = handFive.findHandType()
-    print("Test 5 card best hand: ", result.style == "Straight")
-
-    handFive.currentHand = [Card("Spade", "3"), Card("Spade", "7"), Card("Spade", "6"), Card("Spade", "5"),
-                            Card("Spade", "4")]
-    result = handFive.findHandType()
-    print("Test 5 card best hand: ", result.style == "Straight Flush")
+    print("Test 5 Straight card best hand: ", result.style == "Straight")
 
     handFive.currentHand = [Card("Spade", "4"), Card("Spade", "4"), Card("Spade", "4"), Card("Heart", "5"),
                             Card("Heart", "4")]
     result = handFive.findHandType()
-    print("Test 5 card best hand: ", result.style == "Four of a Kind")
+    print("Test 5 Four of Kind card best hand: ", result.style == "Four of a Kind")
 
 
 def comparingRowsThreeRowTests():
@@ -267,7 +262,45 @@ def comparingRowsThreeRowTests():
 
 
 
+def comparingRowsFiveRowTests():
 
+    hand1 = FiveCardHand()
+    hand2 = FiveCardHand()
+
+    hand1.currentHand = [Card("Spade", "3"), Card("Spade", "7"), Card("Spade", "6"), Card("Spade", "5"),
+                         Card("Spade", "8")]
+    hand2.currentHand = [Card("Spade", "3"), Card("Spade", "7"), Card("Spade", "6"), Card("Spade", "5"),
+                         Card("Spade", "8")]
+    result = hand1.compareRow(hand2)
+    print("Test for same hand: ", result == 0)
+
+    hand1.currentHand = [Card("Spade", "10"), Card("Spade", "7"), Card("Spade", "6"), Card("Spade", "5"),
+                         Card("Spade", "8")]
+    hand2.currentHand = [Card("Spade", "3"), Card("Spade", "7"), Card("Spade", "6"), Card("Spade", "5"),
+                         Card("Spade", "8")]
+    result = hand1.compareRow(hand2)
+    print("Test for hand 1 better: ", result == 1)
+
+    hand1.currentHand = [Card("Spade", "3"), Card("Spade", "10"), Card("Spade", "6"), Card("Spade", "5"),
+                         Card("Diamond", "10")]
+    hand2.currentHand = [Card("Spade", "3"), Card("Spade", "2"), Card("Spade", "6"), Card("Diamond", "10"),
+                         Card("Spade", "10")]
+    result = hand1.compareRow(hand2)
+    print("Test for hand 1 better low rank card: ", result == 1)
+
+    hand1.currentHand = [Card("Spade", "3"), Card("Spade", "3"), Card("Spade", "3"), Card("Spade", "5"),
+                         Card("Spade", "8")]
+    hand2.currentHand = [Card("Spade", "7"), Card("Spade", "7"), Card("Spade", "7"), Card("Spade", "5"),
+                         Card("Spade", "8")]
+    result = hand1.compareRow(hand2)
+    print("Test hand 2 better: ", result == -1)
+
+    hand1.currentHand = [Card("Spade", "7"), Card("Spade", "7"), Card("Spade", "7"), Card("Spade", "5"),
+                         Card("Spade", "8")]
+    hand2.currentHand = [Card("Spade", "7"), Card("Spade", "7"), Card("Spade", "7"), Card("Spade", "6"),
+                         Card("Spade", "8")]
+    result = hand1.compareRow(hand2)
+    print("Test hand 2 better low rank: ", result == -1)
 
 
 
@@ -280,7 +313,8 @@ if __name__ == "__main__":
     #threeCardTest()
     #fiveCardTest()
     #bestHandTest()
-    comparingRowsThreeRowTests()
+    #comparingRowsThreeRowTests()
+    comparingRowsFiveRowTests()
 
 
     # Extra comments working in the Importasnt Cards branch

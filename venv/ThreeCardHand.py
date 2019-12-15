@@ -10,6 +10,7 @@ class ThreeCardHand:
         self.numberOfCards = 0
         self.high = 1
         self.low = 1
+        self.importantCards = []
         self.freq = dict()
         self.totalCardsPossible = 3
         self.finalStyle = None
@@ -32,6 +33,7 @@ class ThreeCardHand:
         self.high = 1
         self.low = 1
         self.freq = dict()
+        self.importantCards = []
 
 
     def hasHighCard(self):
@@ -39,25 +41,16 @@ class ThreeCardHand:
         self.reset()
         self.lineUp()
 
-        for key in self.freq:
-            if self.freq[key] != 0 and key > self.high:
-                self.low = self.high
-                self.high = key
-
-        return PokerHand("High Card", self.high, self.low)
-
-
-    def findRemainingHighest(self, previousNumber):
-
-        # Loop through and if any are not the high value but are better than before then use.
-
-        self.freq[self.high] = 0
+        # If the hand just has a high card then just record all the cards which are present, order then and these
+        # are the important cards.
 
         for key in self.freq:
-            if self.freq[key] != 0 and key > self.low:
-                self.low = key
+            for i in range(0,self.freq[key]): # Add the number of times this occurs.
+                self.importantCards.append(key)
 
-        self.freq[self.high] == previousNumber
+        self.importantCards.sort(reverse=True)
+
+        return PokerHand("High Card", self.importantCards)
 
 
     def hasOnePair(self):
@@ -66,16 +59,23 @@ class ThreeCardHand:
         self.reset()
         self.lineUp()
 
-        # Check if any of them have value 2 and if higher than the previous, allow to loop as could be two pairs so need the higher.
+        # First check if there is a card which appears twice.
 
         for val in self.freq:
-            if self.freq[val] == 2 and val > self.high:
+            if self.freq[val] == 2:
                 hasPair = True
-                self.high = val
+                self.importantCards.append(val)
+        self.importantCards.sort(reverse=True)
 
-        if hasPair:
-            self.findRemainingHighest(2)
-            return PokerHand("One Pair", self.high, self.low)
+        if hasPair: # Then loop through again to find the remaining card.
+            extraCards = []
+            for val in self.freq:
+                if val not in self.importantCards: # So check its not the card we are considering, and then add in.
+                    for i in range(0, self.freq[val]):
+                        extraCards.append(val) # No need to sort the list now, as pair is given prescidence.
+            extraCards.sort(reverse=True)
+
+            return PokerHand("One Pair", self.importantCards + extraCards)
         else:
             return None
 
@@ -87,17 +87,21 @@ class ThreeCardHand:
         self.reset()
         self.lineUp()
 
-        for val in self.freq: #Can't have two triples.
+        for val in self.freq: # Can't have two triples.
             if self.freq[val] == 3:
                 hasThreeOfKind = True
-                self.high = val
+                self.importantCards.append(val)
 
-        if hasThreeOfKind:
-            self.findRemainingHighest(3)
-            return PokerHand("Three of a Kind", self.high, self.low)
+        if hasThreeOfKind:  # Then loop through again to find the remaining card.
+            extraCards = []
+            for val in self.freq:
+                if val not in self.importantCards:
+                    for i in range(0, self.freq[val]):
+                        extraCards.append(val)  # No need to sort the list now, as pair is given prescidence.
+            extraCards.sort(reverse=True)
+            return PokerHand("Three of a Kind", self.importantCards + extraCards)
         else:
             return None
-
 
     def lineUp(self):
 
@@ -161,30 +165,27 @@ class ThreeCardHand:
 
         handOneType = self.findHandType()
         handTwoType = secondHand.findHandType()
-        print(handOneType.style)
-        print(handTwoType.style)
 
-        handDictionary = {"High Card": 1, "One Pair": 2, "Three of a Kind": 3}
-        print(handDictionary[handOneType.style] > handDictionary[handTwoType.style])
+        # Also included the other card types for the 5 card checks.
+        handDictionary = {"High Card": 1, "One Pair": 2, "Two Pair": 3, "Three of a Kind": 4, "Straight": 5, "Flush": 6,
+                          "Full House": 7, "Four of a Kind": 8, "Straight Flush": 9, "Royal Flush": 10}
 
         try:
+            # First check if there is a clear winner, if not then we have to break it down to the cards themselves.
             if handDictionary[handOneType.style] > handDictionary[handTwoType.style]:
                 return 1
             elif handDictionary[handOneType.style] < handDictionary[handTwoType.style]:
                 return -1
             else:
-                # Equal hands so need to compare by high and low term.
-                if handOneType.high > handTwoType.high:
-                    return 1
-                elif handOneType.high < handTwoType.high:
-                    return -1
-                else:
-                    if handOneType.low > handTwoType.low:
+                # Now they have the same style, so we can cycle through the cards checking at each stage.
+                for i in range(0, min(len(handOneType.importantCards), len(handTwoType.importantCards))):
+                    if handOneType.importantCards[i] > handTwoType.importantCards[i]:
                         return 1
-                    elif handOneType.low < handTwoType.low:
+                    if handOneType.importantCards[i] < handTwoType.importantCards[i]:
                         return -1
-                    else:
-                        return 0 # All equal in terms of 3 card hand, as can only have high/low and no devivation.
+
+                # Having reached the end of this the hands must be exactly equal, hence return 0
+                return 0
 
         except Exception:
             # To catch some weird error happening with the type of card not being recorded correctly.
