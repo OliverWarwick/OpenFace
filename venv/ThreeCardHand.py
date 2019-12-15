@@ -142,13 +142,13 @@ class ThreeCardHand:
         if handType.style == "High Card":
             return 0
         elif handType.style == "One Pair":
-            points = handType.high - 5
+            points = handType.importantCards[0] - 5
             if points > 0:
                 return points
             else:
                 return 0
         elif handType.style == "Three of a Kind":
-            points = handType.high + 8
+            points = handType.importantCards[0] + 8
             return points
         else:
             return 0
