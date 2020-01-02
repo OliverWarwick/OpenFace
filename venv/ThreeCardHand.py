@@ -98,7 +98,7 @@ class ThreeCardHand:
                 if val not in self.importantCards:
                     for i in range(0, self.freq[val]):
                         extraCards.append(val)  # No need to sort the list now, as pair is given prescidence.
-            extraCards.sort(reverse=True)
+            extraCards.sort(reverse = True)
             return PokerHand("Three of a Kind", self.importantCards + extraCards)
         else:
             return None
@@ -138,6 +138,7 @@ class ThreeCardHand:
         # Royalities as on the wiki page.
 
         handType = self.findHandType()
+        print(handID + ":  " + handType.style)
 
         if handType.style == "High Card":
             return 0

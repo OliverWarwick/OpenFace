@@ -3,7 +3,10 @@ from Card import Card
 
 def nCr(n,r):
     f = math.factorial
-    return f(n) / f(r) / f(n-r)
+    try:
+        return f(n) / f(r) / f(n-r)
+    except Exception:
+        return 0
 
 def numberOfCardsByValueInDeck(ownHand, oppoHand, cardValue):
 
@@ -19,7 +22,7 @@ def numberOfCardsByValueInDeck(ownHand, oppoHand, cardValue):
         for card in hand.currentHand:
             if card.value == cardValue:
                 total -= 1
-    print("Number of " + cardValue + " which are left in the deck: "+ str(total))
+    #print("Number of " + cardValue + " which are left in the deck: "+ str(total))
     return total
 
 def numberOfCardsBySuitInDeck(ownHand, oppoHand, cardSuit):
@@ -32,7 +35,7 @@ def numberOfCardsBySuitInDeck(ownHand, oppoHand, cardSuit):
         for card in hand.currentHand:
             if card.suit == cardSuit:
                 total -= 1
-    print("Number of " + cardSuit + " which are left in the deck: "+ str(total))
+    #print("Number of " + cardSuit + " which are left in the deck: "+ str(total))
     return total
 
 
@@ -64,48 +67,47 @@ def convertHandTypeToRanking(handStyle):
         return 0
 
 
+# Function to get the expected score of completing a hand, just given the card value and the style
+# highCard - Integer 2->2, 10->10, Jack->11
+# handStyle - String which is the normal style "One Pair", "Two Pair" etc
+# handInQuestion - String again just "Front" ...
+
+def computeExpectedRoyality(highCard, handStyle, handInQuestion):
+
+    if handInQuestion == "Front":
+
+        if handStyle == "One Pair":
+            points = highCard - 5
+            if points > 0:
+                return points
+            else:
+                return 0
+
+        if handStyle == "Three of a Kind":
+            points = highCard + 8
+            return points
+
+
+    elif handInQuestion == "Middle":
+        middleDictOfPoints = {"Three of a Kind": 2, "Straight": 4, "Flush": 8, "Full House": 12,
+                              "Four of a Kind": 20, "Straight Flush": 30, "Royal Flush": 50}
+        try:
+            return middleDictOfPoints[handStyle]
+        except Exception:
+            return 0
+    else:
+        backDictOfPoints = {"Straight": 2, "Flush": 4, "Full House": 6, "Four of a Kind": 10,
+                            "Straight Flush": 15, "Royal Flush": 25}
+        try:
+            return backDictOfPoints[handStyle]
+        except Exception:
+            return 0
 
 
 
 
-# def probOfPairOfCard(ownHand, oppoHand, handInQuestion, deck, card):
-#
-#     # Own hand, and oppo hand for the full 3 hands of each player
-#     # hand in question is for the front/mid/back of the hand.
-#
-#     # Check if a pair exists, by finding hand type and then converting.
-#     # If any of these numbers then contains a pair already so return 1.
-#     alreadyPair = [2,3,4,7,9]
-#     handType = handInQuestion.findHandType()
-#     if handType is not None:
-#         handScore = convertHandTypeToRanking(handType)
-#         if (handScore in alreadyPair) and (handType.low == card.getNumericValue() or handType.high == cardValue.getNumericValue()):
-#             return 1
-#
-#     # This would mean that it has no pair, but all the slots are full, so no chance of a pair.
-#     if handInQuestion.totalCardsPossible == handInQuestion.numberOfCards :
-#         return 0
-#
-#     # If not already done, then need to check how many cards left etc, and compute the prob.
-#     # See notebook for how.
-#
-#     # Find number of those cards left
-#     numberOfThatCardLeftInDeck = numberOfCardsByValueInDeck(ownHand, oppoHand, card.value)
-#     numberOfCardsInDeck = deck.numberOfCards
-#     numberOfAttempts = ownHand.numberOfCardsLeftToBeDealt
-#
-#     # Compute via working out chance of it not happening and subtracting from 1.
-#     # So for 6 cards to draw, wanting a 7 where two 7's are in the deck of 15 cards.
-#     # 13/15 * 12/14 etc.
-#
-#     productOfFractions = 1
-#
-#     for i in range(0, numberOfAttempts):
-#         frac = (numberOfCardsInDeck - (numberOfThatCardLeftInDeck + i)) / (numberOfCardsInDeck - i)
-#         productOfFractions *= frac
-#
-#     print(productOfFractions)
-#     return (1 - productOfFractions)
+
+
 
 # ownHand: Players Hand
 # oppoHand: Players Hand
@@ -136,7 +138,7 @@ def probOfCollectionOfCard(ownHand, oppoHand, handInQuestion, deck, card, number
     # If we did not return from previous then no pair at the moment, so if hand is full or not enough cards to make it,
     # Then should return 0
 
-    if (numberOfCardsNeeded > numberOfThatCardLeftInDeck) or (handInQuestion.numberOfCards == handInQuestion.totalCardsPossible):
+    if (numberOfCardsNeeded > numberOfThatCardLeftInDeck) or (handInQuestion.numberOfCards + numberOfCardsNeeded > handInQuestion.totalCardsPossible):
         return 0
     else:
         waysToDo = nCr(numberOfThatCardLeftInDeck, numberOfCardsNeeded) * nCr(numberOfCardsInDeck-numberOfThatCardLeftInDeck, numberOfCardsLeftToDeal-numberOfCardsNeeded)
@@ -152,7 +154,7 @@ def probOfFullHouse(ownHand, oppoHand, handInQuestion, deck, cardForTriple, card
     handInQuestion.lineUp()
 
     # If we have too many cards then return 0 as we can't make a full hosue.
-    if probOfCollectionOfCard(ownHand,oppoHand,handInQuestion,deck,cardForTriple,4) == 1 or probOfCollectionOfCard(ownHand,oppoHand,handInQuestion,deck,cardForDouble,3):
+    if probOfCollectionOfCard(ownHand,oppoHand,handInQuestion,deck,cardForTriple,4) == 1 or probOfCollectionOfCard(ownHand,oppoHand,handInQuestion,deck,cardForDouble,3) == 1:
         return 0
 
     doubleComplete = handInQuestion.freq.get(cardForDouble.getNumericValue()) == 2
@@ -267,6 +269,10 @@ def probOfRoyalFlush(ownHand, oppoHand, handInQuestion, deck):
         return nCr(numberOfDealsLeft, numberOfCardsNeeded) / nCr(deck.numberOfCards, numberOfDealsLeft)
 
 
+
+################################################################################################################
+#######################################################################################################################
+
 def probOfStraight(ownHand, oppoHand, handInQuestion, deck):
 
     # Check first if their are cards, and if they are in order.
@@ -277,7 +283,13 @@ def probOfStraight(ownHand, oppoHand, handInQuestion, deck):
 
         # TO DO
 
-        return 1
+        return 0.01
+
+
+# Also need to implement the Straight Flush option.
+
+
+#####################################################################################################################################
 
 def probOfTwoPair(ownHand, oppoHand, handInQuestion, deck, cardOne, cardTwo):
 

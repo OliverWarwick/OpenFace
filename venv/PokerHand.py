@@ -10,6 +10,4 @@ class PokerHand:
     def __init__(self, style = None, cardNumbers = []):
 
         self.style = style
-        # self.high = high
-        # self.low = low
         self.importantCards = cardNumbers

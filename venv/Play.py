@@ -81,52 +81,82 @@ class Play:
             print("Final Round - 3 cards.")
             self.completeThreeCardTurn()
 
-        print("Finished Play - evaluating scores.")
-        scorePlayerOne = self.playerOne.evaluateHand()
-        print("Player One Scores: " + str(scorePlayerOne) + "   Total:  " + (str(sum(scorePlayerOne))))
+        # Evaluate the points for royalties and then for the comparision picture.
 
-        scorePlayerTwo = self.playerTwo.evaluateHand()
-        print("Player Two Scores: " + str(scorePlayerTwo) + "   Total:  " + (str(sum(scorePlayerTwo))))
+        # .evaluateHand() returns an array containing the front/middle/back score. To access the actual score, just reference the self.player.royalitiesForHand
+
+        print("Finished Play - evaluating scores.")
+        scorePlayerOne = self.playerOne.scoreRoyalitiesHand()
+        print("Player One Scores: " + str(scorePlayerOne))
+
+        scorePlayerTwo = self.playerTwo.scoreRoyalitiesHand()
+        print("Player Two Scores: " + str(scorePlayerTwo))
+
+        comparisionPoints = self.playerOne.compareTwoHands(self.playerTwo)
+        print("Comparision points: ", comparisionPoints)
+
+        # Sort out the points totals for the game.
+        self.playerOne.totalPointsForGame += ((self.playerOne.royalitesForHand-self.playerTwo.royalitesForHand) + comparisionPoints)
+        self.playerTwo.totalPointsForGame += ((self.playerTwo.royalitesForHand-self.playerOne.royalitesForHand) - comparisionPoints)
+
+        print("Player 1 current points: ", self.playerOne.totalPointsForGame)
+        print("Player 2 current points: ", self.playerTwo.totalPointsForGame)
 
 
 
 
 def runNManyTrials(n):
-    maxScorePlayerOne = 0
-    maxScorePlayerTwo = 0
-    bestHandPlayerOne = PlayerHand()
-    bestHandPlayerTwo = PlayerHand()
+    # maxScorePlayerOne = 0
+    # maxScorePlayerTwo = 0
+    # bestHandPlayerOne = PlayerHand()
+    # bestHandPlayerTwo = PlayerHand()
+    s = []
 
     for i in range(0, n):
         p = Play()
         p.playHand()
+        s.append(p.playerOne.totalPointsForGame)
 
-        if p.playerOne.scoreForHand > maxScorePlayerOne:
-            maxScorePlayerOne = p.playerOne.scoreForHand
-            bestHandPlayerOne.front = p.playerOne.front
-            bestHandPlayerOne.middle = p.playerOne.middle
-            bestHandPlayerOne.back = p.playerOne.back
-        if p.playerTwo.scoreForHand > maxScorePlayerTwo:
-            maxScorePlayerTwo = p.playerTwo.scoreForHand
-            bestHandPlayerTwo.front = p.playerTwo.front
-            bestHandPlayerTwo.middle = p.playerTwo.middle
-            bestHandPlayerTwo.back = p.playerTwo.back
 
-    print("---------------------------------------------------------")
-    print("FINISHED: ")
+        # if p.playerOne.scoreForHand > maxScorePlayerOne:
+        #     maxScorePlayerOne = p.playerOne.scoreForHand
+        #     bestHandPlayerOne.front = p.playerOne.front
+        #     bestHandPlayerOne.middle = p.playerOne.middle
+        #     bestHandPlayerOne.back = p.playerOne.back
+        # if p.playerTwo.scoreForHand > maxScorePlayerTwo:
+        #     maxScorePlayerTwo = p.playerTwo.scoreForHand
+        #     bestHandPlayerTwo.front = p.playerTwo.front
+        #     bestHandPlayerTwo.middle = p.playerTwo.middle
+        #     bestHandPlayerTwo.back = p.playerTwo.back
 
-    print("Player 1")
-    print(maxScorePlayerOne)
-    bestHandPlayerOne.printFullHand()
+    # print("---------------------------------------------------------")
+    # print("FINISHED: ")
+    #
+    # print("Player 1")
+    # print(maxScorePlayerOne)
+    # bestHandPlayerOne.printFullHand()
+    #
+    # print("Player 2")
+    # print(maxScorePlayerTwo)
+    # bestHandPlayerTwo.printFullHand
 
-    print("Player 2")
-    print(maxScorePlayerTwo)
-    bestHandPlayerTwo.printFullHand()
+    return s
+
+
 
 if  __name__ == "__main__":
 
-    runNManyTrials(1000)
 
+    # scores = []
+
+    # for i in range(0,50):
+    #     s = runNManyTrials(5)
+    #     scores.append(s)
+    #
+    # print(scores)
+
+    p = Play()
+    p.playHand()
 
 
 

@@ -12,13 +12,18 @@ class PlayerHand:
     def __init__(self, name = None):
 
         self.playerName = name
+
         self.back = FiveCardHand()
         self.middle = FiveCardHand()
         self.front = ThreeCardHand()
         self.discardPile = FiveCardHand()
         self.numberOfCardsLeftToBeDealt = 17
         self.fantasyLand = False
-        self.scoreForHand = 0
+
+        self.royalitesForHand = 0
+        self.comparisionPointsForHand = 0
+
+        self.totalPointsForGame = 0
 
     def printFullHand(self):
 
@@ -124,33 +129,63 @@ class PlayerHand:
             self.getResponseAndMove(deal[i])
 
 
-    def checkingInequality(self):
-
-        # Order hand types.
-        handDictionary = {("High Card", 1),("One Pair", 2),("Two Pair", 3),("Three of a Kind",4), ("Straight", 5), ("Flush", 6), ("Full House", 7), ("Four of a Kind", 8), ("Straight Flush", 9), ("Royal Flush", 10)}
-
-
-
-
-
     # Get the score for a hand at the end.
-    def evaluateHand(self):
+    def scoreRoyalitiesHand(self):
 
         # Ovewritten methods in both classes for this, so will use the three card play royality for
         # the front hand.
 
-        frontScore = self.front.evaluateHand("Front")
-        middleScore = self.middle.evaluateHand("Middle")
-        backScore = self.back.evaluateHand("Back")
-        self.scoreForHand = sum([frontScore, middleScore, backScore])
+        if self.isHandBust():
+            return 0
+        else:
+            frontScore = self.front.evaluateHand("Front")
+            middleScore = self.middle.evaluateHand("Middle")
+            backScore = self.back.evaluateHand("Back")
+            self.royalitesForHand = sum([frontScore, middleScore, backScore])
 
-        return [frontScore, middleScore, backScore]
+            return self.royalitesForHand
 
 
+    def compareTwoHands(self, handTwo):
+
+        # Account for bust hands, and non-bust hands, by checking first.
+        # Account for clean sweeps too now.
+
+        if self.isHandBust() and handTwo.isHandBust():
+            return 0
+        elif self.isHandBust() and not handTwo.isHandBust():
+            return -6
+        elif not self.isHandBust() and handTwo.isHandBust():
+            return 6
+        else:
+
+            frontComp = self.front.compareRow(handTwo.front)
+            print("Front: ", frontComp)
+            middleComp = self.middle.compareRow(handTwo.middle)
+            print("Middle: ", middleComp)
+            backComp = self.back.compareRow(handTwo.back)
+            print("Back: ", backComp)
+
+            total = frontComp + middleComp + backComp
+
+            if total == 3: # Taking care of the clean sweep.
+                total += 3
+            if total == -3:
+                total -= 3
+
+            self.comparisionPointsForHand = total
+            handTwo.comparisionPointsForHand = -total
+
+            return frontComp + middleComp + backComp
 
 
+    def isHandBust(self):
 
-
+        # Check that the front is weaker than the middle, and middle weaker than back.
+        if self.front.compareRow(self.middle) <= 0 and self.middle.compareRow(self.back) <= 0: # Ugly, but they produce numbers rather than true false, as they could be even.
+            return False
+        else:
+            return True
 
 
 
