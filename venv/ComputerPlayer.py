@@ -365,7 +365,7 @@ class ComputerPlayer(PlayerHand):
 
 
 
-        # THEN JUST ADD THE REST OF THEM.
+        # Code for adding the cards we decided on.
 
         for k in range(0,2):
             pick = handArray[k]
